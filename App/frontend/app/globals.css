@@ -1,0 +1,320 @@
+@import "tailwindcss";
+
+/* "The Record" design: a printed page made of paper, ink and one highlighter.
+   One accent (--hl) is used only to point at something: matched words, focus, hover,
+   the stroke above section titles. Stance colours (supports / contradicts / ...) are
+   data colours: they appear only in dots, chart marks and graph edges, never on controls. */
+:root {
+  --paper: #f7f5f0;
+  --paper-2: #efebe2;
+  --card: #fffdf8;
+  --ink: #16140f;
+  --text: #2a2620;
+  --muted-ink: #6b665c;
+  --line: #d9d4c7;
+  --hl: #ffe45c;
+  --hl-soft: #fff1a8;
+  --hl-faint: #fff8da;
+
+  /* data colours (charts, dots, graph edges only) */
+  --supports: #2f6f4f;
+  --contradicts: #c2412d;
+  --ambiguous: #9a6b1f;
+  --neutral: #8a857b;
+
+  /* shadcn-style aliases so every component maps onto the paper palette */
+  --background: var(--paper);
+  --foreground: var(--text);
+  --card-foreground: var(--text);
+  --muted: var(--paper-2);
+  --muted-foreground: var(--muted-ink);
+  --border: var(--line);
+  --input: var(--ink);
+  --ring: var(--hl);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --accent: var(--hl-soft);
+  --accent-foreground: var(--ink);
+  --radius: 2px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-ink: var(--ink);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-line: var(--line);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-hl: var(--hl);
+  --color-hl-soft: var(--hl-soft);
+  --color-hl-faint: var(--hl-faint);
+  --color-supports: var(--supports);
+  --color-contradicts: var(--contradicts);
+  --color-ambiguous: var(--ambiguous);
+  --color-neutral: var(--neutral);
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, "Cascadia Code", Menlo, Consolas, monospace;
+}
+
+* {
+  border-color: var(--line);
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--hl);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+a.prose-link,
+.prose a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: #e0c200;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--hl);
+}
+
+/* ---------- the highlighter ---------- */
+mark,
+.hl {
+  background: linear-gradient(100deg, transparent 0.5%, var(--hl) 2%, var(--hl) 97%, transparent 99%);
+  color: inherit;
+  padding: 0 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.quote mark,
+.passage mark {
+  background: linear-gradient(transparent 52%, var(--hl) 52%, var(--hl) 94%, transparent 94%);
+  padding: 0 0.04em;
+}
+
+/* ---------- masthead ---------- */
+.mast {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  border-bottom: 3px double var(--ink);
+  padding-bottom: 0.55rem;
+}
+.wordmark {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.65rem;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.dateline {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted-ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 0.35rem 0;
+}
+
+/* ---------- headline ---------- */
+.hero h1 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 3.1rem;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  margin: 1.6rem 0 0.8rem 0;
+}
+.hero p {
+  color: var(--muted-ink);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  max-width: 640px;
+}
+
+/* ---------- section titles: a highlighter stroke above a serif heading ---------- */
+.sec {
+  margin: 2.3rem 0 0.9rem 0;
+}
+.sec::before {
+  content: "";
+  display: block;
+  width: 34px;
+  height: 5px;
+  background: var(--hl);
+  margin-bottom: 0.55rem;
+}
+.sec h2,
+.sec h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.sec p {
+  margin: 0.25rem 0 0 0;
+  color: var(--muted-ink);
+  font-size: 0.9rem;
+  max-width: 720px;
+}
+
+/* ---------- small uppercase labels ---------- */
+.kicker {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted-ink);
+}
+
+/* ---------- headline numbers ---------- */
+.stat {
+  border-top: 2px solid var(--ink);
+  padding: 0.55rem 0 0 0;
+}
+.stat .v {
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 500;
+  line-height: 1.15;
+  font-variant-numeric: lining-nums;
+}
+
+/* ---------- quotes with a source ---------- */
+.quote {
+  border-left: 3px solid var(--ink);
+  padding: 0.15rem 0 0.15rem 1.15rem;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 1.12rem;
+  line-height: 1.55;
+  max-width: 76ch;
+}
+.cite {
+  font-family: var(--font-sans);
+  color: var(--muted-ink);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-top: 0.45rem;
+}
+.cite b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- notice: a warm note, not an alarming box ---------- */
+.notice {
+  background: #fff6cc;
+  border-left: 3px solid #d9b100;
+  color: #4d3d00;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.88rem;
+}
+
+/* ---------- ink bars (no chart library) ---------- */
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.bars .row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3rem;
+  gap: 0.2rem 0.6rem;
+  align-items: center;
+  font-size: 0.9rem;
+}
+.bars .row span {
+  text-align: right;
+  color: var(--muted-ink);
+  font-variant-numeric: tabular-nums;
+}
+.bars .row i {
+  grid-column: 1 / -1;
+  display: block;
+  height: 6px;
+  background: var(--paper-2);
+}
+.bars .row i::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: var(--w);
+  background: var(--bar, var(--ink));
+}
+
+/* readable widths */
+.readable {
+  max-width: 88ch;
+}
+
+/* React Flow on paper */
+.react-flow__node:focus-visible {
+  box-shadow: 0 0 0 3px var(--hl);
+}
+.react-flow__controls button {
+  border-radius: 0;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+.react-flow__minimap {
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: 2.15rem;
+  }
+  .dateline span + span {
+    display: none;
+  }
+}
+
+/* horizontal nav scrolls on phones without showing a scrollbar */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

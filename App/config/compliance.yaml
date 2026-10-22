@@ -1,0 +1,72 @@
+# Record compliance rulebook.
+#
+# Each rule restates a formal requirement from an approved policy, with the section it comes
+# from, so every answer can cite its source. A record (CRM deal, expense task, ...) is checked
+# against the rule version in force on the record's decisive date. Edit this file when a policy
+# changes; nothing here is hard-coded in Python.
+
+version: compliance-1.0
+
+# Role whose approval the approval rules require (matched against the staff roster).
+finance_approver_role: "Head of Finance & People Ops"
+
+discount_new_business:
+  record_type: crm_record
+  # The version in force on the deal's close date applies.
+  versions:
+    - policy: POL-01
+      section: "POL-01:formal-requirements"
+      effective_from: 2025-03-01
+      threshold_pct: 15
+      approver_role: "Head of Finance & People Ops"
+      must_be_recorded_in_crm: true
+      rule_text: >-
+        Any discount of 15% or greater off list price on a new-business deal requires written approval
+        from the Head of Finance & People Ops before the deal is marked Closed Won, recorded in the CRM's
+        approval_record field. Discounts below 15% may be approved by the Account Executive.
+    - policy: POL-02
+      section: "POL-02:formal-requirements"
+      effective_from: 2021-06-01
+      effective_to: 2025-02-28
+      threshold_pct: 10
+      approver_role: "Head of Finance & People Ops"
+      must_be_recorded_in_crm: true
+      rule_text: >-
+        Any discount of 10% or greater off list price requires written approval from the Head of
+        Finance & People Ops before the deal is marked Closed Won, recorded in the CRM's approval_record field.
+
+discount_renewal:
+  record_type: crm_record
+  policy: POL-06
+  section: "POL-06:formal-requirements"
+  effective_from: 2024-06-01
+  cap_pct: 10
+  # A deal counts as a renewal when one of these words appears in its outcome reason, notes or approval.
+  renewal_markers: [renewal]
+  rule_text: >-
+    Renewal discounts are capped at 10% off the account's current contracted rate, and the policy
+    provides no exceptions to the cap.
+
+expense_approval:
+  record_type: task_record
+  process: "Expense Approval"
+  policy: POL-07
+  section: "POL-07:formal-requirements"
+  effective_from: 2021-09-01
+  threshold_amount: 500
+  approver_role: "Head of Finance & People Ops"
+  rule_text: >-
+    Expense claims over $500 require approval from the Head of Finance & People Ops before reimbursement.
+    Claims of $500 or less may be approved by the employee's direct manager.
+
+# Plain names for record and document types in answers.
+type_names:
+  crm_record: CRM deal record
+  task_record: project task record
+  audit_event: system audit log entry
+  policy: policy
+  procedure: process document
+  meeting_note: meeting notes
+  interview: interview
+  communication: message
+  org_reference: org reference

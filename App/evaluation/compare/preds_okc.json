@@ -1,0 +1,326 @@
+{
+  "E01": {
+    "raw": "SUPPORTED",
+    "score": 0.8949,
+    "needs_review": false,
+    "seconds": 106.37
+  },
+  "E04": {
+    "raw": "SUPPORTED",
+    "score": 0.9038,
+    "needs_review": false,
+    "seconds": 9.37
+  },
+  "E05": {
+    "raw": "SUPPORTED",
+    "score": 0.9637,
+    "needs_review": false,
+    "seconds": 19.61
+  },
+  "E06": {
+    "raw": "CONTESTED",
+    "score": 0.6065,
+    "needs_review": true,
+    "seconds": 19.84
+  },
+  "E07": {
+    "raw": "CONTESTED",
+    "score": 0.3595,
+    "needs_review": true,
+    "seconds": 15.85
+  },
+  "E08": {
+    "raw": "CONTRADICTED",
+    "score": 0.1557,
+    "needs_review": true,
+    "seconds": 13.22
+  },
+  "E09": {
+    "raw": "SUPPORTED",
+    "score": 0.7799,
+    "needs_review": true,
+    "seconds": 21.89
+  },
+  "E18": {
+    "raw": "SUPPORTED",
+    "score": 0.8733,
+    "needs_review": false,
+    "seconds": 17.35
+  },
+  "E19": {
+    "raw": "SUPPORTED",
+    "score": 0.9384,
+    "needs_review": false,
+    "seconds": 21.81
+  },
+  "E22": {
+    "raw": "SUPPORTED",
+    "score": 0.78,
+    "needs_review": true,
+    "seconds": 21.85
+  },
+  "E26": {
+    "raw": "INSUFFICIENT_EVIDENCE",
+    "score": 0.3493,
+    "needs_review": false,
+    "seconds": 7.42
+  },
+  "E27": {
+    "raw": "SUPPORTED",
+    "score": 0.7139,
+    "needs_review": true,
+    "seconds": 10.59
+  },
+  "E28": {
+    "raw": "SUPPORTED",
+    "score": 0.8807,
+    "needs_review": true,
+    "seconds": 9.34
+  },
+  "E31": {
+    "raw": "CONTESTED",
+    "score": 0.3931,
+    "needs_review": true,
+    "seconds": 13.49
+  },
+  "E32": {
+    "raw": "SUPPORTED",
+    "score": 0.7616,
+    "needs_review": true,
+    "seconds": 12.92
+  },
+  "E34": {
+    "raw": "SUPPORTED",
+    "score": 0.9469,
+    "needs_review": false,
+    "seconds": 12.19
+  },
+  "E39": {
+    "raw": "CONTRADICTED",
+    "score": 0.1468,
+    "needs_review": true,
+    "seconds": 15.29
+  },
+  "E41": {
+    "raw": "CONTRADICTED",
+    "score": 0.0964,
+    "needs_review": false,
+    "seconds": 5.86
+  },
+  "E42": {
+    "raw": "CONTESTED",
+    "score": 0.4876,
+    "needs_review": true,
+    "seconds": 14.08
+  },
+  "E45": {
+    "raw": "CONTESTED",
+    "score": 0.4981,
+    "needs_review": true,
+    "seconds": 24.76
+  },
+  "E46": {
+    "raw": "CONTRADICTED",
+    "score": 0.1426,
+    "needs_review": true,
+    "seconds": 28.45
+  },
+  "E47": {
+    "raw": "CONTESTED",
+    "score": 0.4443,
+    "needs_review": true,
+    "seconds": 100.87
+  },
+  "E49": {
+    "raw": "CONTESTED",
+    "score": 0.4099,
+    "needs_review": true,
+    "seconds": 75.76
+  },
+  "E50": {
+    "raw": "CONTRADICTED",
+    "score": 0.1959,
+    "needs_review": true,
+    "seconds": 46.67
+  },
+  "P1-F1": {
+    "raw": "SUPPORTED",
+    "score": 0.8778,
+    "needs_review": true,
+    "seconds": 26.93
+  },
+  "P1-P1": {
+    "raw": "CONTESTED",
+    "score": 0.692,
+    "needs_review": true,
+    "seconds": 19.42
+  },
+  "P1-S1": {
+    "raw": "CONTESTED",
+    "score": 0.3064,
+    "needs_review": true,
+    "seconds": 20.86
+  },
+  "P1-P2": {
+    "raw": "SUPPORTED",
+    "score": 0.8393,
+    "needs_review": true,
+    "seconds": 23.98
+  },
+  "P1-P3": {
+    "raw": "CONTESTED",
+    "score": 0.3596,
+    "needs_review": true,
+    "seconds": 9.24
+  },
+  "P2-F1": {
+    "raw": "SUPPORTED",
+    "score": 0.8581,
+    "needs_review": true,
+    "seconds": 21.82
+  },
+  "P2-G1": {
+    "raw": "CONTESTED",
+    "score": 0.5779,
+    "needs_review": true,
+    "seconds": 13.44
+  },
+  "P2-P1": {
+    "raw": "SUPPORTED",
+    "score": 0.7672,
+    "needs_review": true,
+    "seconds": 9.39
+  },
+  "P3-F1": {
+    "raw": "SUPPORTED",
+    "score": 0.8055,
+    "needs_review": true,
+    "seconds": 4.24
+  },
+  "P3-P1": {
+    "raw": "CONTESTED",
+    "score": 0.544,
+    "needs_review": true,
+    "seconds": 8.86
+  },
+  "P3-G1": {
+    "raw": "CONTRADICTED",
+    "score": 0.2066,
+    "needs_review": true,
+    "seconds": 10.01
+  },
+  "P4-F1": {
+    "raw": "SUPPORTED",
+    "score": 0.8689,
+    "needs_review": true,
+    "seconds": 24.63
+  },
+  "P4-P1": {
+    "raw": "CONTESTED",
+    "score": 0.3351,
+    "needs_review": true,
+    "seconds": 15.1
+  },
+  "P4-P2": {
+    "raw": "SUPPORTED",
+    "score": 0.8537,
+    "needs_review": true,
+    "seconds": 19.59
+  },
+  "P5-F1": {
+    "raw": "SUPPORTED",
+    "score": 0.78,
+    "needs_review": true,
+    "seconds": 21.07
+  },
+  "P5-D1": {
+    "raw": "CONTESTED",
+    "score": 0.5488,
+    "needs_review": true,
+    "seconds": 25.64
+  },
+  "P5-P1": {
+    "raw": "CONTESTED",
+    "score": 0.4867,
+    "needs_review": true,
+    "seconds": 7.56
+  },
+  "P5-P2": {
+    "raw": "CONTESTED",
+    "score": 0.4763,
+    "needs_review": true,
+    "seconds": 17.43
+  },
+  "P6-F1": {
+    "raw": "SUPPORTED",
+    "score": 0.7139,
+    "needs_review": true,
+    "seconds": 14.21
+  },
+  "P7-P1": {
+    "raw": "CONTRADICTED",
+    "score": 0.0677,
+    "needs_review": false,
+    "seconds": 13.43
+  },
+  "P7-P2": {
+    "raw": "SUPPORTED",
+    "score": 0.7221,
+    "needs_review": true,
+    "seconds": 21.56
+  },
+  "P7-P3": {
+    "raw": "CONTESTED",
+    "score": 0.4701,
+    "needs_review": true,
+    "seconds": 18.64
+  },
+  "P8-F1": {
+    "raw": "SUPPORTED",
+    "score": 0.79,
+    "needs_review": true,
+    "seconds": 23.63
+  },
+  "P8-P1": {
+    "raw": "CONTESTED",
+    "score": 0.5943,
+    "needs_review": true,
+    "seconds": 24.89
+  },
+  "P8-G1": {
+    "raw": "CONTRADICTED",
+    "score": 0.2391,
+    "needs_review": true,
+    "seconds": 22.27
+  },
+  "P4-F2": {
+    "raw": "SUPPORTED",
+    "score": 0.7487,
+    "needs_review": true,
+    "seconds": 10.95
+  },
+  "P4-P3": {
+    "raw": "SUPPORTED",
+    "score": 0.8344,
+    "needs_review": true,
+    "seconds": 4.18
+  },
+  "P1-F2": {
+    "raw": "CONTESTED",
+    "score": 0.6408,
+    "needs_review": true,
+    "seconds": 20.59
+  },
+  "P5-F2": {
+    "raw": "CONTRADICTED",
+    "score": 0.2248,
+    "needs_review": true,
+    "seconds": 11.46
+  },
+  "P3-F2": {
+    "raw": "SUPPORTED",
+    "score": 0.7571,
+    "needs_review": true,
+    "seconds": 16.05
+  }
+}

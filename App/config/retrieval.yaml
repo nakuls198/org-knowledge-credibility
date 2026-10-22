@@ -1,0 +1,42 @@
+# Retrieval configuration. Ranking strategy is configurable; the default is BM25
+# because the evaluation (evaluation/results) is what decides whether hybrid helps.
+
+default_mode: bm25            # bm25 | semantic | hybrid
+
+hybrid:
+  rrf_k: 60                   # Reciprocal Rank Fusion constant
+  candidate_depth: 50         # candidates per channel before fusion
+
+claim_retrieval:
+  mode: bm25                  # retrieval mode used by claim investigations
+  lexical_k: 30               # BM25 candidates for the claim text
+  counter_k: 20               # candidates for the counter-evidence query
+  identifier_k: 10            # candidates per identifier mentioned in the claim
+  linked_per_document: 2      # sections pulled from each related document
+  max_linked_documents: 12
+  linked_relationship_types: [supersedes, implements, records_decision, related_to, follows_up, depends_on, references]
+  max_evidence: 28            # evidence spans kept after dedup / ranking (configurable limit)
+  max_records: 8             # cap on CSV-record units so system records do not crowd out documents
+  spans_per_section: 2        # top evidence units classified per section
+  min_relevance: 0.12         # span relevance floor (fraction of claim content terms matched, weighted)
+  near_duplicate_jaccard: 0.85 # units this similar are collapsed (copies); paraphrases are handled as dependent evidence instead
+  # Terms added to the counter-evidence query: wording that signals exceptions,
+  # workarounds or contrary practice. Retrieving them deliberately avoids
+  # confirmation bias (only fetching passages that agree with the claim).
+  counter_evidence_terms: [exception, workaround, informally, instead, directly, without, bypass, "after the fact",
+                           "not documented", "no record", outside, retrospectively, draft, pilot, superseded,
+                           "not approved", unresolved, disagree]
+
+# Query expansion: claim term -> extra terms (applied to retrieval only, never to the claim itself)
+synonyms:
+  approval: [approve, approved, sign-off, signoff, "signed off", okay]
+  approve: [approval, sign-off, okay]
+  manager: [head, lead, "direct manager"]
+  finance: ["head of finance", "financial controller", harriet]
+  discount: [discounts, discounting]
+  escalation: [escalate, escalated, ticket]
+  onboarding: [implementation, onboard]
+  expense: [expenses, claim, reimbursement]
+  renewal: [renew, renewals, churn]
+  deployment: [deploy, release, "sign-off"]
+  documentation: [documented, document, write-up, notes]

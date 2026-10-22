@@ -1,0 +1,70 @@
+# Transparent credibility baseline (Stage A).
+#
+# IMPORTANT: every number below is an explicit, adjustable ASSUMPTION, not a
+# measured quantity. The resulting "credibility score" is a heuristic summary of
+# the weighted evidence; it is not a calibrated probability that a claim is true.
+# evaluation/ reports how well it tracks the labelled claims and how sensitive the
+# verdicts are to these assumptions.
+
+version: baseline-v1.0
+
+# --- Source authority depends on WHAT the claim is about -----------------------
+# A policy is the best evidence of what the rule IS (normative claims) but weak
+# evidence of what people actually DO (practice claims); records and first-hand
+# accounts are the reverse. Authority is therefore claim_type x evidence scope.
+# Scope comes from parsed metadata (status, section role, document type) and
+# passage cues, never from a filename alone.
+authority:
+  normative: {formal: 1.0, decision: 0.8, proposal: 0.25, practice: 0.3, testimony: 0.35, belief: 0.15, discussion: 0.3, history: 0.3}
+  practice:  {formal: 0.3, decision: 0.5, proposal: 0.2, practice: 1.0, testimony: 0.7, belief: 0.35, discussion: 0.5, history: 0.2}
+  factual:   {formal: 0.9, decision: 0.9, proposal: 0.3, practice: 0.9, testimony: 0.65, belief: 0.3, discussion: 0.6, history: 0.5}
+
+# Multipliers by document type (derivative summaries / informal channels)
+doc_type_modifier:
+  org_reference: 0.85     # cross-role summaries written about other documents
+  communication: 0.9      # informal channel
+  default: 1.0
+
+# --- Temporal applicability ------------------------------------------------------
+temporal:
+  superseded_current_claim: 0.2   # superseded document used for a claim about the present
+  potentially_stale: 0.6          # procedure older than the policy it implements
+  review_overdue: 0.9
+  history_section_current_claim: 0.5
+  undated: 0.85
+  after_as_of: 0.0                # evidence dated after the assessment's as-of date is excluded
+  replaced_later: 0.2             # like superseded: supporting evidence dated on/before a record that the tool/system was replaced
+
+# --- Provenance completeness: weight = floor + (1-floor) * fraction of fields present
+provenance:
+  floor: 0.6
+  fields: [date, author, status, source_path]
+
+# --- Independence ------------------------------------------------------------------
+# Evidence items in the same dependence cluster are not independent confirmations:
+# the cluster counts its strongest item fully and the rest at `dependent_discount`.
+dependence:
+  dependent_discount: 0.25
+  link_types: [follows_up, depends_on, records_decision, implements]   # relationships that make sources dependent
+  near_duplicate_jaccard: 0.5     # lexical 3-shingle overlap between evidence spans
+  semantic_duplicate_cosine: 0.82 # used only when embeddings are enabled
+  same_person_scopes: [testimony, belief]   # repeated statements by one person = one source
+
+# --- Aggregation ----------------------------------------------------------------------
+# score = (S + prior_support) / (S + C + prior_support + prior_contradict)
+# where S / C are cluster-aggregated weighted support / contradiction masses.
+aggregation:
+  prior_support: 0.25
+  prior_contradict: 0.25
+  interval: 0.9                   # central interval of Beta(S+a, C+b) reported as evidence-weight uncertainty
+
+verdict:
+  supported: 0.7                  # score >= -> SUPPORTED (or PARTIALLY_SUPPORTED, see below)
+  contradicted: 0.3               # score <= -> CONTRADICTED
+  min_mass: 0.3                   # S + C below this -> INSUFFICIENT_EVIDENCE
+  min_coverage: 0.3               # decisive evidence covering < 30% of the claim's key elements -> INSUFFICIENT_EVIDENCE
+  contested_min_side: 0.25        # both S and C >= this in the middle band -> CONTESTED
+  partial_max_authority: 0.5      # supported only by sources with authority below this -> PARTIALLY_SUPPORTED
+  partial_min_coverage: 0.4       # supported but claim coverage below this -> PARTIALLY_SUPPORTED
+  review_interval_width: 0.45     # verdict with a wider interval than this is flagged for review
+  practice_caveat_mass: 0.3       # contradicting practice mass that triggers a caveat on normative claims

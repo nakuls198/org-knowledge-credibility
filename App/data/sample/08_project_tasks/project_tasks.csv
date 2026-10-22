@@ -1,0 +1,4 @@
+task_id,project,process_or_capability,owner_role,owner_name,creator_role,creator_name,status_history,due_date,completion_date,dependencies,blockers,comments,related_decision_or_document
+TASK-201,Leave - Sasha Kim,Leave Request,Team Lead,Robin Ash,Technician,Sasha Kim,Requested:2025-03-01;Approved:2025-03-02,2025-03-10,2025-03-02,,,Approved by Robin Ash before the leave started.,POL-10
+TASK-202,Leave - Robin Ash,Leave Request,Operations Manager,Jamie Lee,Team Lead,Robin Ash,Requested:2025-04-14;Approved:2025-04-20,2025-04-15,2025-04-20,,,Approved by Jamie Lee after the leave had already started.,POL-10
+TASK-203,Update leave procedure,Leave Request,Operations Manager,Jamie Lee,Head of People,Priyanka Rao,Not Started:2025-01-15,2025-02-28,,,,Procedure still describes the old 5-day rule.,PROC-99

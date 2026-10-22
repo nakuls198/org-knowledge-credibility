@@ -1,0 +1,36 @@
+# secrets / local config
+.env
+.env.*
+!.env.example
+
+# confidential corpus - never commit the real dataset
+data/markdown/
+data/private/
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# node
+node_modules/
+.next/
+out/
+frontend/next-env.d.ts
+*.tsbuildinfo
+
+# models / caches
+.models/
+.hf-cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+ui/feedback.jsonl
