@@ -1,0 +1,42 @@
+# Organisation vocabulary used to recognise actors (people / roles / functions).
+#
+# People, their roles and functions are extracted automatically from roster-style
+# Markdown tables in the corpus (a table with "Employee"/"Name" and "Role" columns).
+# This file only adds aliases that a table cannot provide. Edit it for a new corpus.
+
+roster_table:
+  name_columns: [employee, name, person]
+  role_columns: [role, title, position]
+  function_columns: [function, department, team]
+
+# Function aliases are matched case-sensitively with an initial capital ("Finance
+# sign-off", "escalated to Engineering"), so ordinary words ("support system",
+# "the product") are not mistaken for actors.
+function_aliases:
+  "Finance & People Ops": [finance, "people ops", "finance and people ops"]
+  "Sales": [sales]
+  "Customer Success & Delivery": ["customer success", "CS&D", "customer success and delivery"]
+  "Engineering & Product": [engineering]
+  "Leadership": [leadership, "leadership team"]
+
+role_aliases:
+  "Head of Finance & People Ops": ["head of finance", "head of finance and people ops"]
+  "Head of Customer Success & Delivery": ["head of customer success", "head of cs&d", "head of customer success and delivery"]
+  "Account Executive": ["account executives", "ae", "aes"]
+  "Senior Account Executive": ["senior ae"]
+  "Support Rep": ["support reps", "support representative", "reps"]
+  "Product Manager": ["product managers", "pm", "pms"]
+  "Implementation Specialist": ["implementation specialists", "specialist"]
+  "CEO / Founder": ["ceo", "founder", "chief executive"]
+  "COO": ["chief operating officer"]
+
+# Generic actor words: compatible with any role whose title contains one of `matches`.
+generic_roles:
+  manager: {matches: [head, lead, manager, controller, coo, ceo], description: "a line manager / people manager"}
+
+# Capitalised words that are NOT names of tools or systems (used to spot "was Trello replaced?"):
+# sentence words, department and role words, the organisation's name, stages, months and weekdays.
+non_tool_names: [The, This, That, These, Those, Head, Finance, Sales, People, Ops, Support, Lead, Team, Account, Executive,
+                 Customer, Success, Delivery, Engineering, Product, Manager, Northfield, Closed, Won, Lost, Sev, Policy,
+                 Process, January, February, March, April, May, June, July, August, September, October, November,
+                 December, Monday, Friday, Slack, Email]

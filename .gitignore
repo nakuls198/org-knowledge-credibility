@@ -1,0 +1,33 @@
+# secrets / local config
+.env
+.env.*
+!.env.example
+
+# private corpus (point DATA_DIR at it instead of committing it)
+data/markdown/
+data/private/
+data/store/
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+*.db
+
+# models / caches
+.models/
+.hf-cache/
+
+# UI state
+ui/feedback.jsonl
+ui/state/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

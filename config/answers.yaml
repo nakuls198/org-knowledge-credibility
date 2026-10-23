@@ -1,0 +1,30 @@
+# Vocabulary for understanding plain-language questions (okc.answers).
+#
+# Everything here is the organisation's own wording: how its records are named, which kinds of
+# question ask for a scan of all records, and which words mark the rule topics the rulebook covers.
+
+# Record id conventions: "deal 27" -> DEAL-027. `words` are how people name the record in a question,
+# `width` is the zero-padding of the number in the id.
+record_references:
+  DEAL: {words: [deal], width: 3}
+  TASK: {words: [task], width: 3}
+  AUD: {words: [aud, audit event, event], width: 4}
+
+# "Which deals broke the policy?" style questions. `pattern` matches the kind of record asked about;
+# `label` is how answers name those records.
+scan_subjects:
+  deals: {pattern: '\b(deals?|discounts?|crm)\b', label: "closed-won deals"}
+  expenses: {pattern: '\b(expenses?|expense claims?|reimburse\w*)\b', label: "expense claims"}
+
+# The rule topics the rulebook answers (first match wins).
+rule_topics:
+  expense: '\b(expenses?|reimburs\w*|expense claims?)\b'
+  renewal: '\brenewals?\b'
+  discount: '\bdiscounts?\b'
+
+# "... without Finance" / "... without Harriet": words naming the approver the question skips
+# (the approver's first name is added from the roster).
+without_approver_words: [finance, head of finance]
+
+# The organisation's own name and similar words that carry no meaning when matching a question.
+organisation_words: [northfield]

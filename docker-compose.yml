@@ -1,0 +1,67 @@
+# The whole platform: database, search index, API (with both ML models) and UI.
+#   docker compose up -d --build
+# The Northfield dataset is mounted read-only from ./data/northfield.
+
+name: northfield-ai
+
+services:
+  postgres:
+    image: postgres:16.8-alpine
+    environment:
+      POSTGRES_USER: okc
+      POSTGRES_PASSWORD: okc
+      POSTGRES_DB: okc
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U okc -d okc"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.4
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false          # local use only; not published outside the Docker network
+      - xpack.ml.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - cluster.routing.allocation.disk.threshold_enabled=false
+    volumes: [esdata:/usr/share/elasticsearch/data]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s || exit 1"]
+      interval: 10s
+      timeout: 8s
+      retries: 30
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://okc:okc@postgres:5432/okc
+      SEARCH_BACKEND: elasticsearch
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      EMBEDDINGS_ENABLED: "true"
+      NLI_ENABLED: "true"
+      DATA_DIR: /data/northfield
+      CONFIG_DIR: /app/config
+      EVALUATION_DIR: /app/evaluation
+    volumes:
+      - ./data/northfield:/data/northfield:ro
+      - ./config:/app/config:ro
+      - ./evaluation:/app/evaluation
+    ports: ["127.0.0.1:8001:8000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      elasticsearch: {condition: service_healthy}
+
+  ui:
+    build: ./ui
+    environment:
+      API_URL: http://backend:8000
+    volumes: [uistate:/ui/state]
+    ports: ["127.0.0.1:8501:8501"]
+    depends_on: [backend]
+
+volumes:
+  uistate:
+  pgdata:
+  esdata:

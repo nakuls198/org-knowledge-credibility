@@ -1,0 +1,99 @@
+# Evidence-relationship reasoning configuration.
+#
+# Labels: SUPPORTS | CONTRADICTS | NEUTRAL | AMBIGUOUS
+# Scope : formal (rule as documented) | decision (meeting decision) | proposal (draft / pilot / option)
+#         practice (what people / systems actually did) | testimony (first-hand account)
+#         belief (second-hand or uncertain understanding) | history (version history / background)
+#
+# Classifier scores and NLI / LLM confidences are intermediate signals, NOT
+# calibrated probabilities that a claim is true.
+
+classifier:
+  mode: rules+nli      # rules | rules+nli | llm | llm+rules  (falls back to rules if a component is unavailable)
+  version: rules-v1.0
+
+thresholds:
+  min_relevance: 0.12          # below this a unit is NEUTRAL (not about the claim)
+  lexical_support: 0.5         # relevance at which overlap alone counts as weak support
+  support_label: 0.35          # minimum combined support strength for SUPPORTS
+  contradict_label: 0.35       # minimum combined conflict strength for CONTRADICTS
+  ambiguity_margin: 0.12       # |support - conflict| below this (both >= 0.45) -> AMBIGUOUS
+  hedge_factor: 0.6            # strength multiplier for hedged / uncertain statements
+
+nli:
+  entail_override: 0.85        # rules NEUTRAL + NLI entailment >= this -> SUPPORTS
+  contradict_override: 0.85    # rules NEUTRAL + NLI contradiction >= this -> CONTRADICTS
+  min_topic_relevance: 0.25    # NLI contradictions on less topical passages are ignored
+
+llm:
+  temperature: 0
+  seed: 7
+  max_passage_chars: 1500
+  max_units: 8                 # passages judged by the local LLM per claim (CPU speed limit); others keep rule labels
+
+# Cue lexicons (lower-case substrings / phrases).
+cues:
+  approval_predicates: [approve, approval, approved, approves, "sign-off", "sign off", "signed off", "signs off",
+                        "okay", "okays", "okayed", "okd", "the nod", "go ahead", "go for it", "authoris", "authoriz",
+                        "green light", "agreed", "goes to", "routed to", "routing"]
+  # Extra phrases that count as an approval in a chat turn ("Lior: fine with it").
+  chat_approval_extras: ["fine with it", "go ahead", "close it"]
+  deviation: ["none found", "no corresponding entry", "never went through", "outside crm", "not routed",
+              "no record", "no linked", "rather than routing", "instead of", "rather than", "don't wait", "do not wait",
+              "directly", "retrospectively", "after the fact", "square it", "bypass", "without waiting",
+              "not written down", "undocumented", "isn't how the policy reads", "not really how the policy reads",
+              "above the usual", "verbal exception", "emergency exception", "informally"]
+  # Words that make a CLAIM itself about informal practice (together with the deviation cues).
+  claim_deviation_words: ["themselves", "herself", "himself", "sometimes", "informally"]
+  compliance: ["properly logged", "recorded in crm", "no exceptions", "before close", "all properly", "properly",
+               "signed off by finance", "within normal process", "consistently followed"]
+  practice: ["in practice", "informally", "usually", "typically", "often", "frequently", "habit", "workaround",
+             "common knowledge", "how we handle", "how we operate", "just", "we've basically been", "has operated"]
+  # A policy or procedure that reports what actually happens, rather than the formal rule.
+  practice_report_phrases: ["in practice", "informally", "observed in practice", "by habit", "in reality"]
+  belief: ["i think", "i learned", "i'd assume", "i would assume", "picked it up", "my understanding",
+           "as far as i know", "i believe", "i haven't gone back"]
+  hedge: ["not sure", "not totally sure", "maybe", "might", "i don't remember", "can't say for certain",
+          "no idea", "unconfirmed", "not 100%", "honestly", "i'd assume", "possibly", "unclear", "contested",
+          "don't have full visibility"]
+  proposal: ["proposed", "draft", "not formally in force", "not yet in force", "pilot", "as drafted", "option ",
+             "options considered", "not approved", "pending approval"]
+  universal_denial: ["no exceptions", "never seen", "every ", "always", "all ", "pretty disciplined", "pretty tight"]
+  # Phrases that negate a claim's predicate even without a "not" next to it.
+  negation_phrases: ["not adopted", "rather than formal", "never revisited", "hasn't happened", "still hasn't", "not yet",
+                     "no one was assigned", "does not specify"]
+  # phrases that negate but are not about the claim's predicate
+  negation_exempt: ["no further sign-off", "not only", "no later than", "nothing significant", "none significant"]
+
+# value-change pattern: "from 10% to 15%" -> the first value is the superseded one
+value_change_pattern: 'from\s+\$?(?P<old>\d+(?:\.\d+)?)\s?(?P<u1>%|percent)?\s+to\s+\$?(?P<new>\d+(?:\.\d+)?)\s?(?P<u2>%|percent)?'
+
+# Record fields interpreted as quantities (CSV column -> unit)
+record_quantities:
+  discount_pct: "%"
+  "discount pct": "%"
+  amount: "$"
+
+# Record fields naming who approved something
+record_approver_fields: ["approval role", "approval_role", "approver", "approved by", "signed off by"]
+
+# Default scope by document type / section role (used when the unit's own cues are silent)
+scope_defaults:
+  doc_type:
+    policy: formal
+    procedure: formal
+    org_reference: formal
+    meeting_note: discussion
+    interview: testimony
+    communication: practice
+    crm_record: practice
+    task_record: practice
+    audit_event: practice
+  section_role:
+    decision: decision
+    action: decision
+    options: proposal
+    proposal: proposal
+    history: history
+    open_issue: practice
+    uncertainty: testimony

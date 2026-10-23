@@ -1,0 +1,189 @@
+# Ingestion configuration.
+#
+# Everything dataset-specific lives here rather than in code, so the pipeline can
+# be pointed at a different Markdown corpus by editing this file only.
+# Rules are applied in order; the first matching rule wins. Every inferred value
+# records which rule produced it (e.g. doc_type_source = "folder_rule:02_policies").
+
+version: 1
+
+include_globs: ["**/*.md", "**/*.csv"]
+exclude_globs:
+  - "**/__MACOSX/**"
+  - "**/.*/**"
+  - "**/README.md"                  # release notes for the dataset, not organisational knowledge
+  - "**/labelled_claims_sample.csv" # evaluation labels - must never become evidence
+
+# Shared identifiers. A document whose title or filename carries one of these is
+# given that identifier as its document ID (e.g. POL-01). Mentions in text become
+# references. `kind` says what the prefix denotes.
+identifiers:
+  pattern: '\b([A-Z]{2,8})-(\d{2,4})\b'
+  prefixes:
+    POL: {kind: document, doc_type: policy}
+    PROC: {kind: document, doc_type: procedure}
+    INT: {kind: document, doc_type: interview}
+    MTG: {kind: document, doc_type: meeting_note}
+    COMMS: {kind: document, doc_type: communication}
+    DEAL: {kind: record, doc_type: crm_record}
+    TASK: {kind: record, doc_type: task_record}
+    AUD: {kind: record, doc_type: audit_event}
+  # Identifiers with other prefixes (DEPLOY-001, PROJ-304, CFG-112) are kept as
+  # external entity references; they are reported, not treated as broken links.
+
+# Document-type inference. Explicit metadata (YAML frontmatter `type:`) always
+# wins; these rules apply only when it is absent.
+doc_type_rules:
+  - {match: "**/superseded/**org_chart*", doc_type: org_reference}
+  - {match: "**/02_policies/**", doc_type: policy}
+  - {match: "**/03_process_docs/**", doc_type: procedure}
+  - {match: "**/04_interviews/**", doc_type: interview}
+  - {match: "**/05_meetings/**", doc_type: meeting_note}
+  - {match: "**/06_communications/**", doc_type: communication}
+  - {match: "**/07_crm/**", doc_type: crm_record}
+  - {match: "**/08_project_tasks/**", doc_type: task_record}
+  - {match: "**/09_audit_log/**", doc_type: audit_event}
+  - {match: "**/00_overview/**", doc_type: org_reference}
+default_doc_type: document
+
+# Status inference from folder / filename conventions (metadata wins when present).
+status_rules:
+  - {match: "**/superseded/**", status: superseded, reason: "file is in a 'superseded' folder"}
+  - {match: "**/*SUPERSEDED*", status: superseded, reason: "filename marked SUPERSEDED"}
+  - {match: "**/*DRAFT*", status: draft, reason: "filename marked DRAFT"}
+
+# Files holding several logical documents. Each heading of `heading_level` whose
+# text starts with an identifier becomes its own document; text before the first
+# split heading stays with a container document.
+split_documents:
+  - match: "**/06_communications/*.md"
+    heading_level: 2
+
+# CSV files: one record document per row.
+csv_sources:
+  - match: "**/07_crm/*.csv"
+    id_column: deal_id
+    title_template: "CRM deal {deal_id} - {customer_name}"
+    date_columns: [close_date, "stage_history:last"]   # event dates; never plans
+    people_columns: [ae_owner]
+    reference_columns: [approval_role, notes]
+    required_columns: [ae_owner, discount_pct]   # empty -> incomplete_record issue
+    entity_columns: [customer_name]              # near-identical values -> ambiguous_entity issue
+  - match: "**/08_project_tasks/*.csv"
+    id_column: task_id
+    title_template: "Task {task_id} - {project}"
+    date_columns: [completion_date, "status_history:last"]  # due_date is a plan, not an event
+    people_columns: [owner_name, creator_name]
+    reference_columns: [related_decision_or_document, dependencies, comments]
+  - match: "**/09_audit_log/*.csv"
+    id_column: event_id
+    title_template: "Audit event {event_id} - {system}: {action}"
+    date_columns: [timestamp]
+    people_columns: [actor_name]
+    reference_columns: [related_record, object, notes]
+
+# Canonical names for metadata keys found in `- **Key:** value` bullets or
+# YAML frontmatter. Unlisted keys are kept verbatim (snake_cased).
+metadata_aliases:
+  document_owner: owner
+  owner: owner
+  from: author
+  participants: participants
+  approval_status: approval_status
+  effective_date: effective_date
+  review_date: review_date
+  superseded_date: superseded_date
+  superseded_by: superseded_by
+  supersedes: supersedes
+  last_updated: last_updated
+  date: date
+  interview_date: interview_date
+  timestamp: timestamp
+  version: version
+  related_documents: related_documents
+  related_policy: related_policy
+  thread_relationship: thread_relationship
+  role_function: role_function
+  role: role_function
+  to: recipients
+  subject: subject
+
+# Which metadata field gives a document its primary date (first present wins).
+date_fields: [effective_date, date, interview_date, timestamp, last_updated, superseded_date]
+
+# Metadata fields that create explicit relationships.
+#   direction: forward = this doc -> referenced doc; reverse = referenced doc -> this doc
+metadata_relationships:
+  supersedes: {type: supersedes, direction: forward}
+  superseded_by: {type: supersedes, direction: reverse}
+  related_documents: {type: related_to, direction: forward}
+  related_policy: {type: implements, direction: forward}
+  references: {type: references, direction: forward}
+
+# Phrases in a `thread_relationship` field (communications) mapped to typed edges.
+thread_relationship_patterns:
+  - {pattern: 'follow-up to\s+(?P<id>[A-Z]+-\d+)', type: follows_up}
+  - {pattern: 'references\s+(?P<id>[A-Z]+-\d+)\s+content', type: depends_on}
+  - {pattern: 'precedes\s+(?P<id>[A-Z]+-\d+)', type: precedes}
+  - {pattern: 'referencing\s+(?:deal\s+)?(?P<id>[A-Z]+-\d+)', type: references}
+
+# Section roles from heading text (case-insensitive substring, first match wins).
+# Used for modality (proposal vs decision vs implemented rule) and authority.
+section_roles:
+  - {contains: "proposed requirement", role: proposal}
+  - {contains: "purpose (as drafted)", role: proposal}
+  - {contains: "exceptions (as drafted)", role: proposal}
+  - {contains: "formal requirement", role: requirement}
+  - {contains: "required approval", role: requirement}
+  - {contains: "steps", role: procedure_step}
+  - {contains: "responsible", role: responsibility}
+  - {contains: "trigger", role: procedure_step}
+  - {contains: "expected timing", role: requirement}
+  - {contains: "final decision", role: decision}
+  - {contains: "decision owner", role: decision}
+  - {contains: "options considered", role: options}
+  - {contains: "unresolved", role: open_issue}
+  - {contains: "action", role: action}
+  - {contains: "rationale", role: rationale}
+  - {contains: "conditions or exceptions", role: exception}
+  - {contains: "exception", role: exception}
+  - {contains: "discussion notes", role: testimony}
+  - {contains: "processes performed", role: testimony}
+  - {contains: "processes only observed", role: testimony}
+  - {contains: "statements of uncertainty", role: uncertainty}
+  - {contains: "discussion", role: discussion}
+  - {contains: "version history", role: history}
+  - {contains: "background", role: history}
+  - {contains: "purpose", role: purpose}
+  - {contains: "references", role: references}
+default_section_role: content
+
+# Long sections are split into chunks of at most this many characters, on
+# paragraph / list-item boundaries, keeping the parent section and offsets.
+max_section_chars: 1800
+
+# Lexical near-duplicate detection between sections (word 3-shingle Jaccard).
+near_duplicate_jaccard: 0.6
+near_duplicate_min_chars: 120
+
+# Metadata each document type is expected to carry. A missing field is reported as a `missing_metadata`
+# ingestion issue (severity: info unless stated). Document types not listed here are not checked.
+expected_metadata:
+  policy: {fields: [owner, version, approval_status, effective_date], severity: warning}
+  procedure: {fields: [owner, last_updated]}
+  meeting_note: {fields: [date, participants]}
+  interview: {fields: [interview_date]}
+  communication: {fields: [timestamp]}
+
+# Document types that are reference material and legitimately carry no date (no `undated_document` issue).
+undated_exempt_doc_types: [org_reference]
+
+# Inferred relationship rules (always stored with origin=inferred and evidence).
+inference:
+  # meeting -> doc mentioned inside a decision/action section
+  records_decision_section_roles: [decision, action]
+  records_decision_confidence: 0.6
+  # policy text cites a date that equals a meeting's date
+  records_decision_date_match_confidence: 0.8
+  # implementing procedure last updated before the policy it implements took effect
+  stale_implementation_check: true

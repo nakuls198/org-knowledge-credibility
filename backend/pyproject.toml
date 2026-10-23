@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "okc-backend"
+version = "1.0.0"
+description = "Organisational Knowledge Credibility: API, ingestion, retrieval and credibility engine"
+requires-python = ">=3.11,<3.13"
+# Direct dependencies are pinned; the full resolved set is in requirements.lock.
+dependencies = [
+  "fastapi==0.115.12",
+  "uvicorn[standard]==0.34.0",
+  "pydantic==2.11.3",
+  "pydantic-settings==2.8.1",
+  "sqlalchemy==2.0.40",
+  "alembic==1.15.2",
+  "psycopg[binary]==3.2.6",
+  "elasticsearch==8.17.2",
+  "markdown-it-py==3.0.0",
+  "pyyaml==6.0.2",
+  "httpx==0.28.1",
+  "numpy==2.2.4",
+  "scikit-learn==1.6.1",
+  "scipy==1.15.2",
+  "sentence-transformers==3.4.1",
+  "transformers==4.50.3",
+  # torch is installed separately (CPU wheel): see backend/Dockerfile
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.3.5",
+  "pytest-cov==6.1.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["okc*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "integration: needs live PostgreSQL / Elasticsearch (skipped when unavailable)",
+  "ml: needs the ML models (skipped when unavailable)",
+]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
